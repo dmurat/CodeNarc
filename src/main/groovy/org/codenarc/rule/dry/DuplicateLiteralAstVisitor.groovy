@@ -15,6 +15,7 @@
  */
 package org.codenarc.rule.dry
 
+import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.expr.*
@@ -44,6 +45,11 @@ class DuplicateLiteralAstVisitor extends AbstractAstVisitor {
         assert constantTypes
         this.constantTypes = constantTypes
         this.ignoreValuesSet = ignoreValuesSet
+    }
+
+    @Override
+    void visitAnnotations(AnnotatedNode node) {
+        // Do nothing; ignore (do not visit) list expressions within annotations
     }
 
     @Override

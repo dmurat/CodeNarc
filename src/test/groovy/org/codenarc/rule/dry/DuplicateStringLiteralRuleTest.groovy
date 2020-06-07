@@ -192,6 +192,49 @@ class DuplicateStringLiteralRuleTest extends AbstractRuleTestCase<DuplicateStrin
     }
 
     @Test
+    void testInAnnotation_NoViolation() {
+        final SOURCE = '''
+            @MyAnnotation1StringValue("string1")
+            @MyAnnotation2StringValue("string1")
+            class MyClass1 {
+            }
+
+            @MyAnnotation1ListValue(value = ["string1"])
+            @MyAnnotation2StringValue("string1")
+            class MyClass2 {
+            }
+
+            @MyAnnotation1ListValue(value = ["string1", "string2"])
+            @MyAnnotation2ListValue(value = ["string3", "string4"])
+            class MyClass3 {
+            }
+        '''
+
+        assertNoViolations(SOURCE)
+    }
+
+    @Test
+    void testInAnnotation_MultiValueAttributes_NoViolation() {
+        final SOURCE = '''
+            @MyAnnotation1ListValue(value = ["string1"])
+            @MyAnnotation2ListValue(value = ["string1", "string2"])
+            class MyClass1 {
+            }
+
+            @MyAnnotation1ListValue(value = ["string10", "string11"])
+            @MyAnnotation2ListValue(value = ["string11", "string10"])
+            class MyClass2 {
+            }
+        '''
+
+        assertNoViolations(SOURCE)
+//        assertViolations(SOURCE,
+//                [lineNumber: 3, sourceLineText: '@MyAnnotation2ListValue(value = ["string1", "string2"])', messageText: 'Duplicate String Literal: string1'],
+//                [lineNumber: 8, sourceLineText: '@MyAnnotation2ListValue(value = ["string11", "string10"])', messageText: 'Duplicate String Literal: string11'],
+//                [lineNumber: 8, sourceLineText: '@MyAnnotation2ListValue(value = ["string11", "string10"])', messageText: 'Duplicate String Literal: string10'])
+    }
+
+    @Test
     void testIgnoreStrings_IgnoresSingleValue() {
         final SOURCE = '''
             def x = ['xyz', 'abc', 'xyz']
