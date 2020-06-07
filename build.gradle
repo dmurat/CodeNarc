@@ -18,6 +18,7 @@ repositories {
 }
 
 def groovyVersion = '2.4.17'
+def groovyTestVersion = '3.0.4'
 def slf4jVersion = '1.7.25'
 
 dependencies {
@@ -39,6 +40,12 @@ dependencies {
     testCompile 'commons-cli:commons-cli:1.4'
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.stefanbirkner:system-rules:1.16.1'
+
+    testRuntimeOnly("org.codehaus.groovy:groovy:$groovyTestVersion")
+    testRuntimeOnly("org.codehaus.groovy:groovy-xml:$groovyTestVersion")
+    testRuntimeOnly("org.codehaus.groovy:groovy-json:$groovyTestVersion")
+    testRuntimeOnly("org.codehaus.groovy:groovy-ant:$groovyTestVersion")
+    testRuntimeOnly("org.codehaus.groovy:groovy-templates:$groovyTestVersion")
 }
 
 sourceSets {
