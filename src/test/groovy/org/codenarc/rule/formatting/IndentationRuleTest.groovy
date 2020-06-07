@@ -939,14 +939,53 @@ class IndentationRuleTest extends AbstractRuleTestCase<IndentationRule> {
     }
 
     @Test
-    void test_MethodChaining_MultilineClosureParameter() {
+    void test_MethodChaining_MultilineClosureParameter_Style1() {
         final SOURCE = '''
-            |buildFileList().collect { item -> item.name }
-            |        .each { name -> println name }
-            |        .each { someName ->
+            |buildFileList()
+            |        .collect { item ->
+            |            item.name
+            |        }
+            |        .each1 { name -> println name }
+            |        .each2 { someName ->
             |            println someName
             |        }
-            |        .each { name -> println name }
+            |        .each3 { name ->
+            |            println name
+            |        }
+        '''.stripMargin()
+        assertNoViolations(SOURCE)
+    }
+
+//    @Test
+//    void test_MethodChaining_MultilineClosureParameter_Style2() {
+//        final SOURCE = '''
+//            |buildFileList().collect { item ->
+//            |                   item.name
+//            |               }
+//            |               .each1 { name -> println name }
+//            |               .each2 { someName ->
+//            |                   println someName
+//            |               }
+//            |               .each3 { name ->
+//            |                   println name
+//            |               }
+//        '''.stripMargin()
+//        assertNoViolations(SOURCE)
+//    }
+
+    @Test
+    void test_MethodChaining_MultilineClosureParameter_Style3() {
+        final SOURCE = '''
+            |buildFileList().collect { item ->
+            |            item.name
+            |        }
+            |        .each1 { name -> println name }
+            |        .each2 { someName ->
+            |            println someName
+            |        }
+            |        .each3 { name ->
+            |            println name
+            |        }
         '''.stripMargin()
         assertNoViolations(SOURCE)
     }
