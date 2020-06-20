@@ -86,6 +86,7 @@ class IndentationAstVisitor extends AbstractAstVisitor {
     private final Set<BlockStatement> nestedBlocks = []
     private final Set<BlockStatement> flexibleIndentBlocks = []
     private final Map<BlockStatement, Integer> blockIndentLevel = [:].withDefault { 0 }
+    private final Map<BlockStatement, Integer> methodColumnForBlock = [:]
 
     @Override
     protected void visitClassEx(ClassNode node) {
@@ -182,6 +183,7 @@ class IndentationAstVisitor extends AbstractAstVisitor {
             }
 
             setupFlexibleIndentForAnyClosureParameterBlocks(args)
+            recordMethodColumnForClosureBlocks(call, args)
         }
 
         super.visitMethodCallExpression(call)
@@ -191,6 +193,14 @@ class IndentationAstVisitor extends AbstractAstVisitor {
         return args.expressions.each { expr ->
             if (isClosureWithBlock(expr)) {
                 blockIndentLevel[expr.code] = blockIndentLevel[expr.code] + 1
+            }
+        }
+    }
+
+    private List<Expression> recordMethodColumnForClosureBlocks(MethodCallExpression methodCallExpression, ArgumentListExpression args) {
+        return args.expressions.each { expr ->
+            if (isClosureWithBlock(expr)) {
+                methodColumnForBlock[expr.code] = methodCallExpression.method.columnNumber
             }
         }
     }
@@ -253,7 +263,8 @@ class IndentationAstVisitor extends AbstractAstVisitor {
     private void checkStatementIndent(Statement statement, BlockStatement block) {
         String description = "statement on line ${statement.lineNumber} in class ${currentClassName}"
         if (flexibleIndentBlocks.contains(block)) {
-            flexibleCheckForCorrectColumn(statement, description)
+            Integer methodColumn = methodColumnForBlock[block]
+            flexibleCheckForCorrectColumn(statement, description, methodColumn)
         } else {
             checkForCorrectColumn(statement, description)
         }
@@ -295,8 +306,9 @@ class IndentationAstVisitor extends AbstractAstVisitor {
         }
     }
 
-    private void flexibleCheckForCorrectColumn(ASTNode node, String description) {
+    private void flexibleCheckForCorrectColumn(ASTNode node, String description, Integer methodColumn) {
         List<Integer> allowedColumns = (0..2).collect { level -> columnForIndentLevel(indentLevel + level) }
+        allowedColumns.addAll((0..2).collect { level -> columnForIndentLevel(indentLevel + level) + methodColumn - 2 - rule.spacesPerIndentLevel })
         if (!allowedColumns.contains(node.columnNumber)) {
             addViolation(node, "The $description is at the incorrect indent level: Expected one of columns $allowedColumns but was ${node.columnNumber}")
         }

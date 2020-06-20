@@ -956,22 +956,22 @@ class IndentationRuleTest extends AbstractRuleTestCase<IndentationRule> {
         assertNoViolations(SOURCE)
     }
 
-//    @Test
-//    void test_MethodChaining_MultilineClosureParameter_Style2() {
-//        final SOURCE = '''
-//            |buildFileList().collect { item ->
-//            |                   item.name
-//            |               }
-//            |               .each1 { name -> println name }
-//            |               .each2 { someName ->
-//            |                   println someName
-//            |               }
-//            |               .each3 { name ->
-//            |                   println name
-//            |               }
-//        '''.stripMargin()
-//        assertNoViolations(SOURCE)
-//    }
+    @Test
+    void test_MethodChaining_MultilineClosureParameter_Style2() {
+        final SOURCE = '''
+            |buildFileList().collect { item ->
+            |                   item.name
+            |               }
+            |               .each1 { name -> println name }
+            |               .each2 { someName ->
+            |                   println someName
+            |               }
+            |               .each3 { name ->
+            |                   println name
+            |               }
+        '''.stripMargin()
+        assertNoViolations(SOURCE)
+    }
 
     @Test
     void test_MethodChaining_MultilineClosureParameter_Style3() {
